@@ -314,3 +314,17 @@ node   demo/_smoke.js      # 冒烟 + 数值：8 视图切换、13 画布绘制�
   swept-volume 碰撞检测
 - **圆弧插补**：以三点二次贝塞尔逼近弧段，大跨度圆弧需加密关键点
 - 移动小程序与云端 SaaS 后台不属 Qt 技术栈，需独立立项
+
+---
+
+## 十一、在线演示（Vercel 静态托管）
+
+演示页 `demo/monitor-demo.html`（零依赖单文件 HTML）已部署到 Vercel 静态托管：
+
+- **线上地址**：`https://lingxi-polish.vercel.app/`
+- **部署方式**：GitHub 导入模式（仓库 `Ziv-ZHI/lingxi-polish`），Root Directory = `demo`，
+  Framework = Other，Build Command 留空；推送到 `main` 自动重部署。
+- **首页约定**：Vercel 静态托管默认只认 `index.html` 当首页，故 `demo/index.html` 为
+  `monitor-demo.html` 的副本；`demo/vercel.json` 仅保留 `{"version": 2}`（不依赖 rewrite 兜底）。
+- **本地预览（等价校验）**：`python -m http.server` 起本地服务后访问 `demo/index.html`，
+  内容与线上一致。`demo/_verify.py` / `demo/_smoke.js` 为演示页回归测试脚本（详见 `demo/VERCEL_DEPLOY.md`）。
