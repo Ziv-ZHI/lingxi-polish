@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/theme">
+        <file alias="app.qss">../../theme/theme.qss</file>
+        <file alias="check.png">../../theme/check.png</file>
+    </qresource>
+</RCC>

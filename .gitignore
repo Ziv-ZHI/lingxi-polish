@@ -1,0 +1,39 @@
+# ===== 测试 / 校验脚本（不部署，仅本地回归用）=====
+demo/_verify.py
+demo/_smoke.js
+demo/_vmini.py
+demo/_templog.txt
+
+# ===== 历史遗留的临时重构脚本（非交付物）=====
+demo/_mp_*.py
+demo/_refactor_*.py
+demo/_smoke_patch.py
+demo/_tmp.js
+demo/_tabvis.js
+
+# ===== 备份文件 =====
+*.bak
+*.bak5
+demo/*.bak
+demo/*.bak5
+
+# ===== Qt 构建产物 / 用户配置 =====
+build/
+**/.qmake.stash
+**/Makefile
+**/*.o
+**/object_script.*
+**/*.pro.user
+*.user
+
+# ===== 本地发布副本（由 monitor-demo.html 同步，可选忽略）=====
+# demo/publish/
+
+# ===== 系统 / 依赖 =====
+.DS_Store
+Thumbs.db
+node_modules/
+
+# ===== Office 临时锁文件 =====
+~$*
+~$.*

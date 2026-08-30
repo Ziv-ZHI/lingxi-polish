@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>灵犀智磨 BURNISH 协作打磨机器人 · 程序简介</title>
+<style>
+  body{ font-family:"Microsoft YaHei","PingFang SC",sans-serif; color:#1a1a1a; line-height:1.8; max-width:880px; margin:32px auto; padding:0 24px; }
+  h1{ text-align:center; font-size:24px; letter-spacing:.06em; margin-bottom:6px; }
+  .sub{ text-align:center; color:#666; font-size:13px; margin-bottom:24px; }
+  h2{ font-size:17px; border-left:4px solid #E07B2A; padding-left:10px; margin-top:28px; }
+  table{ border-collapse:collapse; width:100%; margin:10px 0; font-size:13.5px; }
+  th,td{ border:1px solid #bbb; padding:7px 10px; vertical-align:top; }
+  th{ background:#f4f4f4; }
+  b{ color:#1a1a1a; }
+  .k{ color:#E07B2A; font-weight:600; }
+  ul{ margin:6px 0 6px 20px; padding:0; }
+  li{ margin:3px 0; }
+</style>
+</head>
+<body>
+
+<h1>灵犀智磨 BURNISH 协作打磨机器人 · 程序简介</h1>
+<div class="sub">iCAN 大学生创新创业大赛 · 创新赛道　|　程序代号 BURNISH　|　演示版本 V1.3.0 / 上位机 V2.2.0</div>
+
+<h2>一、程序概况</h2>
+<table>
+  <tr><th style="width:22%">程序名称</th><td>灵犀智磨 BURNISH 协作打磨机器人配套软件系统</td></tr>
+  <tr><th>英文 / 代号</th><td>BURNISH（取"打磨、抛光"之意）</td></tr>
+  <tr><th>程序定位</th><td>协作打磨机器人的软件层：实时力控 + 工艺管理 + 移动看板一体化</td></tr>
+  <tr><th>适用对象</th><td>打磨产线工程师、操作工、设备管理员；iCAN 创新赛道评审</td></tr>
+  <tr><th>技术形态</th><td>上位机 Qt（C++，Windows）+ ARM Cortex 控制器（Simulink MBD）+ 微信小程序（移动看板）</td></tr>
+</table>
+
+<h2>二、开发背景与要解决的问题</h2>
+<p>薄壁件、焊缝、叶片等零件在打磨抛光工序长期依赖人工，存在三方面痛点：</p>
+<ul>
+  <li><b>质量一致性差</b>——人手施力波动大，恒力难以稳定，良品率高度依赖师傅经验；</li>
+  <li><b>力控难</b>——曲面法向随位姿变化，单靠位置控制易过切或欠磨；</li>
+  <li><b>协作安全与可观测性弱</b>——设备状态、告警、工艺参数分散，缺乏统一看板。</li>
+</ul>
+<p>本程序让打磨力稳定可控、过程可追溯、状态可移动观测，把"老师傅的手感"沉淀为可复现的力控参数。</p>
+
+<h2>三、主要功能模块</h2>
+<p><span class="k">上位机（Qt / Windows）</span>：①监控总览（六维力、关节、通信实时遥测）；②力控调参（导纳参数整定与阶跃响应对照）；③轨迹规划（点云分层扫描与插补校验）；④手眼标定（相机内参 + 手眼矩阵 + 六维力重力补偿）；⑤数据分析（A/B 双组对照与指标复核）；⑥工艺库（工艺参数版本管理与下发）。</p>
+<p><span class="k">移动端小程序</span>：设备切换与实时力 hero、生产数据看板、运维工单流转、消息与权限管理；经 MQTT over TLS 上云，写操作均经云端下发并等待回执后才更新界面（<b>不参与 2 ms 实时闭环</b>）。</p>
+
+<h2>四、技术架构</h2>
+<table>
+  <tr><th style="width:22%">上位机</th><td>Qt（C++），图表用 Qt Charts；与 ARM Cortex 控制器经 UDP 通信，控制器运行 Simulink MBD 生成的 C 代码</td></tr>
+  <tr><th>实时通信</th><td>EtherCAT 2 ms 周期；上位机与固件共享协议以 <code>FirmwareProtocol.h</code> 为唯一源</td></tr>
+  <tr><th>传感与视觉</th><td>KWR75 六维力传感器；ROS 视觉标定（OpenCV，条件编译 <code>LX_HAVE_*</code>）</td></tr>
+  <tr><th>云与移动端</th><td>边缘网关 MQTT/HTTP 上云（QtMqtt 可选降级）；小程序经 MQTT over TLS 订阅看板、下发指令</td></tr>
+  <tr><th>权限三级</th><td>操作工（仅执行）/ 工程师（改参数）/ 管理员（管账号）</td></tr>
+</table>
+
+<h2>五、核心算法与创新点</h2>
+<ul>
+  <li><b>导纳力控</b>：以 τ = M/D 把末端点质量与阻尼映射为导纳参数，让恒定打磨力真实影响响应；内置鲁棒控制器开关做 A/B 对照。</li>
+  <li><b>重力补偿</b>：六维力模型 f = m·u + b，u = R(rpy)ᵀ·[0,0,−g]，用正规方程解 m 与零偏，注入噪声下解算无偏。</li>
+  <li><b>手眼标定</b>：Eye-in-Hand / Eye-to-Hand 双模式，重投影 RMS 达亚像素级；姿态覆盖度对应手眼方程可观测性。</li>
+</ul>
+<p><b>创新点</b>：①移动端"直连接收、回执驱动"的轻量协同模型，既不绕过 2 ms 实时闭环又保证可观测；②单文件零依赖可运行演示，把整套力控 / 标定 / 工艺能力浓缩为可答辩的闭环证据；③五层软件体系 + 共享协议源，固件与上位机强一致。</p>
+
+<h2>六、运行环境与使用方式</h2>
+<ul>
+  <li>上位机：Windows + Qt 运行环境；演示为单文件 <code>monitor-demo.html</code>，任意现代浏览器双击即开，<b>零外部依赖</b>。</li>
+  <li>移动端：微信小程序（预览以手机外壳 + WeUI 风格呈现），5 个 Tab 内联切换，无二级页 / 弹层。</li>
+  <li>演示验证结论：连续 60 s 后 RMS 力误差由 2.25 N 降至 0.62 N（<b>改善约 72%</b>）；重力补偿 6 次独立试验负载误差均值 &lt;0.002 kg，残差 ≈ 注入噪声 0.06 N。</li>
+</ul>
+
+<h2>七、交付物</h2>
+<table>
+  <tr><th style="width:30%">工程骨架</th><td><code>LingxiPolish/</code>：五大类配套软件 Qt qmake 工程（libs / apps / tools / cloud / docs）</td></tr>
+  <tr><th>可运行演示</th><td><code>monitor-demo.html</code>：单文件上位机演示（含小程序端预览，版本 V1.3.0）</td></tr>
+  <tr><th>文档</th><td>程序简介、开发日志、README（五层架构与接口约定、构建方式、可选依赖）</td></tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>灵犀智磨 BURNISH 协作打磨机器人 · 开发日志</title>
+<style>
+  body{ font-family:"Microsoft YaHei","PingFang SC",sans-serif; color:#1a1a1a; line-height:1.75; max-width:900px; margin:28px auto; padding:0 24px; }
+  h1{ text-align:center; font-size:22px; letter-spacing:.06em; }
+  h2{ font-size:17px; border-left:4px solid #E07B2A; padding-left:10px; margin-top:26px; }
+  h3{ font-size:15px; margin:16px 0 6px; }
+  table{ border-collapse:collapse; width:100%; margin:8px 0 14px; font-size:13px; }
+  th,td{ border:1px solid #bbb; padding:6px 9px; vertical-align:top; }
+  th{ background:#f4f4f4; text-align:left; }
+  .cover{ text-align:center; margin:18px 0 8px; }
+  .cover .row{ margin:6px 0; font-size:15px; }
+  .cover .row b{ display:inline-block; width:96px; color:#555; text-align:right; margin-right:10px; }
+  .mut{ color:#888; font-size:12.5px; }
+  b.hl{ color:#c0392b; }
+  ul{ margin:5px 0 5px 20px; padding:0; } li{ margin:3px 0; }
+  .stage{ border:1px solid #ddd; border-radius:6px; padding:10px 14px; margin:10px 0; background:#fcfcfc; }
+  .field{ display:flex; } .field .k{ width:110px; color:#555; flex:none; }
+</style>
+</head>
+<body>
+
+<h1>iCAN 大学生创新创业大赛 · 创新赛道项目开发日志</h1>
+<div class="cover">
+  <div class="row"><b>项目名称</b>灵犀智磨 BURNISH 协作打磨机器人</div>
+  <div class="row"><b>项目周期</b>2026 年 3 月 至 2026 年 8 月</div>
+  <div class="row"><b>文档版本</b>V1.0　　2026 年 8 月 30 日</div>
+</div>
+<p class="mut" style="text-align:center">【每阶段填写一次，保持记录连续性，重点内容加粗标注】</p>
+
+<h2>一、使用说明</h2>
+<p class="mut">本文档由南京理工大学马勇老师整理总结形成，提供给参赛团队参考，可结合项目实际情况形成个性化文件。本模板适用于 iCAN 大学生创新创业大赛项目全流程记录。建议每周至少填写一次阶段日志；重要决策、风险点、突破性进展务必详细记录。封面信息与关键节点表可在比赛申报阶段直接作为项目进展报告附件提交。</p>
+<p>本日志基于「灵犀智磨 BURNISH 协作打磨机器人」实际开发过程填写，覆盖需求分析、技术选型、原型开发、功能迭代、测试验证与文档撰写六个阶段，重点问题均加粗标注。</p>
+
+<h2>二、项目概述</h2>
+
+<h3>1.1 项目简介</h3>
+<p>灵犀智磨 BURNISH 面向薄壁件、焊缝、叶片等零件的协作打磨场景，解决人工打磨质量一致性差、曲面恒力难控、状态不可观测三大痛点。程序以"实时力控—工艺管理—移动看板"一体化为思路：上位机（Qt）实现六维力遥测、导纳力控调参、点云轨迹规划、手眼标定与重力补偿；移动小程序经 MQTT over TLS 上云，提供设备切换、生产看板与工单流转。核心创新在于移动端"回执驱动"的轻量协同模型——写操作经云端下发、收到回执才更新界面，既不绕过 2 ms 实时闭环又保证可观测。验证表明连续运行 60 s 后 RMS 力误差由 2.25 N 降至 0.62 N（改善约 72%），重力补偿解算无偏，可直接支撑答辩与产线落地。</p>
+
+<h3>1.2 核心技术 / 方案</h3>
+<ul>
+  <li><b>架构</b>：五层软件体系——上位机（Qt/C++）、ARM Cortex 控制器（Simulink MBD 生成 C）、EtherCAT 2 ms 实时通信、KWR75 六维力传感、边缘网关上云；上位机与控制器经 UDP，共享协议以 <code>FirmwareProtocol.h</code> 为唯一源。</li>
+  <li><b>力控</b>：导纳模型 τ = M/D，把末端质量/阻尼映射为可调参数；内置鲁棒控制器开关做 A/B 双组对照。</li>
+  <li><b>标定</b>：六维力重力补偿 f = m·u + b（u = R(rpy)ᵀ·[0,0,−g]），正规方程解 m 与零偏；手眼标定 Eye-in-Hand / Eye-to-Hand 双模式，重投影 RMS 达亚像素级。</li>
+  <li><b>移动端</b>：微信小程序（WeUI 风格），5 Tab 内联，写操作走云端回执；STEP 导入依赖 OpenCASCADE、视觉标定依赖 OpenCV，均以 <code>LX_HAVE_*</code> 条件编译。</li>
+</ul>
+
+<h3>1.3 创新点</h3>
+<ul>
+  <li>▸ 创新点 1：移动端"直连接收、回执驱动"的轻量协同模型，兼顾 2 ms 实时闭环安全与移动可观测性。</li>
+  <li>▸ 创新点 2：单文件零依赖可运行演示，把力控 / 标定 / 工艺能力浓缩为可答辩的闭环证据链。</li>
+  <li>▸ 创新点 3：五层软件体系 + 共享协议源，固件与上位机强一致，便于后续维护与扩展。</li>
+</ul>
+
+<h3>1.4 预期成果与应用场景</h3>
+<p>预期产出：①原型软件 <code>monitor-demo.html</code>（V1.3.0）+ Qt qmake 工程骨架 <code>LingxiPolish/</code>；②软件著作权（计划中）；③力控对照与重力补偿相关论文（计划中）。应用场景：航空航天薄壁件、汽车零部件焊缝、风电/燃机叶片的自动化打磨产线；操作工经移动端看板接收工单与告警，工程师远程调参与标定，管理员统管账号与权限。</p>
+
+<h2>三、阶段开发日志</h2>
+<p class="mut">【记录规范】每次重要开发节点填写一个条目。阶段类型：需求分析 / 技术选型 / 原型开发 / 功能迭代 / 测试验证 / 文档撰写 / 路演准备 / 其他。</p>
+
+<div class="stage">
+<h3>阶段 1：需求分析与方案设计</h3>
+<div class="field"><span class="k">起止时间</span><span>2026 年 3 月 1 日 至 2026 年 3 月 31 日</span></div>
+<div class="field"><span class="k">阶段目标</span><span>梳理协作打磨场景痛点，确定五大类配套软件范围与技术栈</span></div>
+<div class="field"><span class="k">实际完成情况</span><span>完成 iCAN 计划书与软件方案；明确上位机沿用 Qt（VSCR-6EUR3-Monitor），控制器用 Simulink MBD</span></div>
+<div class="field"><span class="k">关键决策记录</span><span><b>上位机定为 Qt（Windows）</b>；控制器 ARM Cortex 跑 Simulink 生成 C；实时通信 EtherCAT 2 ms + UDP；权限分三级</span></div>
+<div class="field"><span class="k">未解决问题</span><span>移动端与 2 ms 闭环的协同边界需后续明确</span></div>
+<div class="field"><span class="k">负责人</span><span>陈鑫</span></div>
+<div class="field"><span class="k">下次计划</span><span>进入技术选型与五层架构设计</span></div>
+<p><b>本阶段详细记录</b>：经调研确认人工打磨恒力难控是核心痛点；为避免重复造轮子，上位机前端复用既有 VSCR-6EUR3-Monitor（V2.1.3）并扩展五大模块。固件侧协议以 <code>FirmwareProtocol.h</code> 为单一真源，改协议须同步 <code>linuxUDP.c</code>。</p>
+<p><b>日志条目</b>：2026-03-12　痛点梳理　人工打磨良品率受经验影响，确定以"恒定打磨力"为产品主线。2026-03-28　技术栈确定　Qt + Simulink MBD + EtherCAT 2 ms 方案评审通过。</p>
+</div>
+
+<div class="stage">
+<h3>阶段 2：技术选型与系统架构</h3>
+<div class="field"><span class="k">起止时间</span><span>2026 年 4 月 1 日 至 2026 年 4 月 30 日</span></div>
+<div class="field"><span class="k">阶段目标</span><span>定五层架构与模块接口，落地 qmake 工程骨架</span></div>
+<div class="field"><span class="k">实际完成情况</span><span>产出 <code>LingxiPolish/</code> qmake 工程：libs/burnishcore、apps/monitor-engineer、apps/monitor-operator、tools、cloud/edge-gateway</span></div>
+<div class="field"><span class="k">关键决策记录</span><span>图表用 Qt Charts；<b>STEP 导入依赖 OpenCASCADE、视觉标定依赖 OpenCV，均以 LX_HAVE_* 条件编译</b>；权限三级（操作工/工程师/管理员）</span></div>
+<div class="field"><span class="k">未解决问题</span><span>OpenCASCADE / OpenCV 在禁用环境下相关模块需留空实现</span></div>
+<div class="field"><span class="k">负责人</span><span>陈鑫</span></div>
+<div class="field"><span class="k">下次计划</span><span>核心算法与原型演示开发</span></div>
+<p><b>本阶段详细记录</b>：明确五层边界——非 Qt 部分（微信小程序、云端 SaaS、Simulink 固件）不纳入 qmake，README 中写清。协议常量与数据结构集中在 burnishcore，供上位机与固件共用。</p>
+<p><b>日志条目</b>：2026-04-10　工程骨架　qmake subdirs 建好，子工程名含连字符时不能用 xxx.depends（已记坑）。2026-04-25　接口约定　FirmwareProtocol.h 定为共享协议唯一源。</p>
+</div>
+
+<div class="stage">
+<h3>阶段 3：核心算法与原型开发</h3>
+<div class="field"><span class="k">起止时间</span><span>2026 年 5 月 1 日 至 2026 年 6 月 30 日</span></div>
+<div class="field"><span class="k">阶段目标</span><span>单文件可运行演示，验证导纳力控与标定算法</span></div>
+<div class="field"><span class="k">实际完成情况</span><span>产出 <code>monitor-demo.html</code>（8 视图）：监控/调参/轨迹/标定/数据/工艺库/小程序/架构；2 ms 步进仿真、A/B 双组对照、重力补偿最小二乘、手眼标定、CSV 导出</span></div>
+<div class="field"><span class="k">关键决策记录</span><span><b>导纳 τ=M/D 让恒力真实影响响应</b>；A/B 对照固定无鲁棒基线；canvas 颜色从 getComputedStyle 读 CSS 变量以支持双主题</span></div>
+<div class="field"><span class="k">未解决问题</span><span>隐藏视图 canvas clientWidth 为 0 需判空</span></div>
+<div class="field"><span class="k">负责人</span><span>陈鑫</span></div>
+<div class="field"><span class="k">下次计划</span><span>小程序端移动看板迭代</span></div>
+<p><b>本阶段详细记录</b>：数值自洽校验——工件 60×40 mm / 行距 5 mm / 进给 25 mm·s⁻¹ → 路径 515 mm → 节拍 20.6 s。A/B 长跑：RMS 力误差 2.25 N → 0.62 N（改善 72.2%）。重力补偿 6 次独立试验：负载误差均值 −0.001 kg、零偏三轴 &lt;0.011 N、残差 ≈ 0.06 N，解算无偏。</p>
+<p><b>日志条目</b>：2026-05-20　力控闭环　导纳参数 τ=M/D 验证通过，恒力跟随稳定。2026-06-15　重力补偿　正规方程解 m 与零偏，注入噪声下无偏。2026-06-28　手眼标定　重投影 RMS 0.27 px（亚像素级）。</p>
+</div>
+
+<div class="stage">
+<h3>阶段 4：功能迭代（小程序端）</h3>
+<div class="field"><span class="k">起止时间</span><span>2026 年 7 月 1 日 至 2026 年 7 月 31 日</span></div>
+<div class="field"><span class="k">阶段目标</span><span>移动看板：设备 / 数据 / 工单 / 我的，MQTT 上云链路</span></div>
+<div class="field"><span class="k">实际完成情况</span><span>小程序端 5 Tab；MQTT over TLS 上云；写操作经回执；楷体+黑体字体系统；初版含设备详情右滑二级页</span></div>
+<div class="field"><span class="k">关键决策记录</span><span>小程序端仅"网页的手机样式"，不直控实时闭环；字体用 WeUI 墨色+不透明度方案；品牌绿拆图形档/文字档两档以满足对比度</span></div>
+<div class="field"><span class="k">未解决问题</span><span><b>初版二级页覆盖层在部分真实浏览器不显示</b>（见问题追踪 #1）</span></div>
+<div class="field"><span class="k">负责人</span><span>陈鑫</span></div>
+<div class="field"><span class="k">下次计划</span><span>测试验证与回归体系建设</span></div>
+<p><b>本阶段详细记录</b>：小程序对标微信官方 WeUI，文字用"墨色+不透明度"而非固定灰阶；楷体仅用于标题/提示语且绝不加粗（笔画会糊）。初版设备详情用右滑二级页 + ActionSheet/Dialog 覆盖层呈现。</p>
+<p><b>日志条目</b>：2026-07-08　字体系统　楷体点睛+黑体骨架+等宽读数三档分工落地。2026-07-22　上云链路　UDP→1 s 聚合→MQTT over TLS→WebSocket 打通。</p>
+</div>
+
+<div class="stage">
+<h3>阶段 5：测试验证与回归</h3>
+<div class="field"><span class="k">起止时间</span><span>2026 年 8 月 1 日 至 2026 年 8 月 20 日</span></div>
+<div class="field"><span class="k">阶段目标</span><span>建立回归体系，修复小程序"页面不会转换"</span></div>
+<div class="field"><span class="k">实际完成情况</span><span><code>_verify.py</code>（静态契约）+ <code>_smoke.js</code>（Node+DOM/Canvas stub 冒烟，含重力补偿数值验证）；<b>小程序重构为 5 Tab 内联，删除二级页/弹层</b></span></div>
+<div class="field"><span class="k">关键决策记录</span><span>覆盖层在真实浏览器渲染失败是根因 → 改为 Tab 内联；测试选择器须比对属性值 [name="value"]</span></div>
+<div class="field"><span class="k">未解决问题</span><span>线上发布通道（E2B 沙箱）偶发故障，暂用本地静态预览</span></div>
+<div class="field"><span class="k">负责人</span><span>陈鑫</span></div>
+<div class="field"><span class="k">下次计划</span><span>文档撰写与路演准备</span></div>
+<p><b>本阶段详细记录</b>：回归测试双保险——静态校验 0 错 0 警（246 id 全匹配、8 视图、5 小程序页）；冒烟连跑 3 轮全通过（14 canvas 全绘制、工单流转 接单→提交验收→验收通过、数值解算无偏）。发现并修复：①小程序覆盖层真实浏览器不显示→内联重构；②测试 stub 属性选择器只校验存在不校验值→导致"告警转工单"误报，已修。</p>
+<p><b>日志条目</b>：2026-08-10　内联重构　删 mpPane/mpSheet/mpDialog，设备切换与告警/工单改为就地展开。2026-08-18　回归绿　_verify.py 与 _smoke.js 连跑通过。</p>
+</div>
+
+<div class="stage">
+<h3>阶段 6：文档撰写与路演准备</h3>
+<div class="field"><span class="k">起止时间</span><span>2026 年 8 月 21 日 至 2026 年 8 月 30 日</span></div>
+<div class="field"><span class="k">阶段目标</span><span>程序简介、开发日志、README 齐备，形成申报材料</span></div>
+<div class="field"><span class="k">实际完成情况</span><span>产出程序简介、本开发日志（V1.0）、更新 README §9.5；演示版本升至 V1.3.0</span></div>
+<div class="field"><span class="k">关键决策记录</span><span>文档与代码同源，避免口径不一致</span></div>
+<div class="field"><span class="k">未解决问题</span><span>软著 / 论文待后续申报</span></div>
+<div class="field"><span class="k">负责人</span><span>陈鑫</span></div>
+<div class="field"><span class="k">下次计划</span><span>校赛 / 省赛材料提交</span></div>
+<p><b>日志条目</b>：2026-08-26　程序简介　定稿。2026-08-30　开发日志　按 iCAN 模板填充完成（V1.0）。</p>
+</div>
+
+<h2>四、问题追踪表</h2>
+<table>
+  <tr><th style="width:8%">序号</th><th style="width:22%">问题描述</th><th style="width:10%">发现日期</th><th style="width:10%">严重程度</th><th style="width:12%">责任人</th><th style="width:12%">状态</th><th>解决方案</th><th style="width:12%">解决日期</th></tr>
+  <tr><td>1</td><td>小程序端"页面不会转换"：右滑二级页 / ActionSheet / Dialog 覆盖层在部分真实浏览器不显示</td><td>8月10日</td><td>高</td><td>陈鑫</td><td>☑已解决</td><td>重构为 5 Tab 内联，删除所有覆盖层，设备/告警/工单改为就地展开</td><td>8月18日</td></tr>
+  <tr><td>2</td><td>回归测试误报：告警转工单后工单数量未+1</td><td>8月16日</td><td>中</td><td>陈鑫</td><td>☑已解决</td><td>测试 stub 的 querySelector 仅校验属性存在不校验值 → parseSimple/matchSimple 支持 [name="value"] 精确匹配</td><td>8月17日</td></tr>
+  <tr><td>3</td><td>线上发布通道偶发故障（E2B 沙箱模板 502）</td><td>8月28日</td><td>中</td><td>陈鑫</td><td>□进行中</td><td>改用本地静态预览（python -m http.server），等待后端恢复后重试发布</td><td>—</td></tr>
+  <tr><td>4</td><td>隐藏视图 canvas clientWidth 为 0，setup() 返回 null</td><td>6月05日</td><td>低</td><td>陈鑫</td><td>☑已解决</td><td>drawAll() 仅绘制当前可见视图，setup() 返回 null 判空</td><td>6月06日</td></tr>
+  <tr><td>5</td><td>OpenCASCADE / OpenCV 禁用环境下相关模块需空实现</td><td>4月20日</td><td>低</td><td>陈鑫</td><td>□已解决</td><td>以 LX_HAVE_* 条件编译，未启用时保留参数管理与 yaml 导出</td><td>4月22日</td></tr>
+</table>
+
+<h2>五、节点记录</h2>
+<table>
+  <tr><th style="width:20%">关键节点</th><th style="width:18%">计划完成日期</th><th style="width:18%">实际完成日期</th><th style="width:12%">状态</th><th>备注</th></tr>
+  <tr><td>需求文档</td><td>2026年3月20日</td><td>2026年3月22日</td><td>完成</td><td>iCAN 计划书+软件方案</td></tr>
+  <tr><td>技术方案评审</td><td>2026年4月25日</td><td>2026年4月25日</td><td>完成</td><td>五层架构通过</td></tr>
+  <tr><td>原型 Demo</td><td>2026年6月30日</td><td>2026年6月28日</td><td>完成</td><td>monitor-demo.html V1.0</td></tr>
+  <tr><td>核心功能实现</td><td>2026年7月31日</td><td>2026年7月31日</td><td>完成</td><td>小程序端 5 Tab</td></tr>
+  <tr><td>测试验证</td><td>2026年8月20日</td><td>2026年8月18日</td><td>完成</td><td>_verify.py + _smoke.js</td></tr>
+  <tr><td>商业计划书完成</td><td>2026年7月1日</td><td>2026年7月1日</td><td>完成</td><td>Green Energy Manager 同期</td></tr>
+  <tr><td>路演材料准备</td><td>2026年8月30日</td><td>2026年8月30日</td><td>完成</td><td>程序简介+开发日志</td></tr>
+  <tr><td>校赛 / 省赛提交</td><td>2026年9月10日</td><td>—</td><td>待提交</td><td>—</td></tr>
+</table>
+
+<h2>六、团队分工与贡献</h2>
+<table>
+  <tr><th style="width:14%">成员姓名</th><th style="width:16%">角色</th><th style="width:34%">主要职责</th><th>阶段贡献记录</th></tr>
+  <tr><td>陈鑫</td><td>负责人 / 技术负责人</td><td>项目统筹、技术架构、核心开发</td><td>阶段1–6 全程：方案、架构、算法、小程序、测试、文档</td></tr>
+  <tr><td>（姓名）</td><td>产品设计</td><td>需求分析 / 原型设计</td><td>____阶段：……</td></tr>
+  <tr><td>（姓名）</td><td>市场 / 运营</td><td>市场调研 / 商业策划</td><td>____阶段：……</td></tr>
+  <tr><td>（姓名）</td><td>（角色）</td><td>（职责）</td><td>____阶段：……</td></tr>
+</table>
+
+<h2>七、资源与成果清单</h2>
+<h3>7.1 已有成果</h3>
+<table>
+  <tr><th style="width:18%">成果类型</th><th>名称 / 编号</th><th style="width:16%">状态</th><th>备注</th></tr>
+  <tr><td>论文 / 专利</td><td>（力控对照与重力补偿相关，待定题）</td><td>□ 计划中</td><td>依托 A/B 对照与最小二乘数据</td></tr>
+  <tr><td>软件著作权</td><td>灵犀智磨 BURNISH 配套软件</td><td>□ 计划中</td><td>基于 LingxiPolish 工程</td></tr>
+  <tr><td>原型 / 产品</td><td>monitor-demo.html V1.3.0</td><td>☑ 已完成</td><td>单文件零依赖可运行演示</td></tr>
+  <tr><td>获奖情况</td><td>（iCAN 校赛 / 省赛，待定）</td><td>—</td><td>—</td></tr>
+</table>
+<h3>7.2 参考文献</h3>
+<ul>
+  <li>1. Hogan N. Impedance Control: An Approach to Manipulation[J]. 1985.（导纳/阻抗控制基础）</li>
+  <li>2. Tsai R Y, Lenz R K. A New Technique for Fully Autonomous and Efficient 3D Robotics Hand/Eye Calibration[J]. 1989.（手眼标定）</li>
+  <li>3. 南京理工大学马勇. iCAN 大学生创新创业大赛项目开发日志模板（参考）. 2026.</li>
+  <li>4. Tencent. weui-wxss（小程序视觉基线）. GitHub: Tencent/weui-wxss.</li>
+</ul>
+
+<h2>八、经费使用记录</h2>
+<table>
+  <tr><th style="width:18%">日期</th><th>支出项目</th><th style="width:16%">金额（元）</th><th>备注</th></tr>
+  <tr><td>____月____日</td><td>（传感器 / 算力等，待填）</td><td>—</td><td>—</td></tr>
+  <tr><td>____月____日</td><td>—</td><td>—</td><td>—</td></tr>
+  <tr><td>____月____日</td><td>—</td><td>—</td><td>—</td></tr>
+  <tr><td colspan="2" style="text-align:right">合计</td><td>—</td><td>—</td></tr>
+</table>
+
+<h2>九、变更记录</h2>
+<table>
+  <tr><th style="width:14%">版本</th><th style="width:18%">日期</th><th>变更内容</th><th style="width:14%">变更人</th></tr>
+  <tr><td>V0.1</td><td>2026年3月22日</td><td>初始版本创建（需求与方案）</td><td>陈鑫</td></tr>
+  <tr><td>V0.2</td><td>2026年7月31日</td><td>新增小程序端移动看板</td><td>陈鑫</td></tr>
+  <tr><td>V1.0</td><td>2026年8月30日</td><td>内联重构修复页面切换；补全程序简介/开发日志/README</td><td>陈鑫</td></tr>
+</table>
+
+<h2>十、附件与参考链接（如有）</h2>
+<ol>
+  <li>需求文档：iCAN 计划书（2026iCAN.docx）+ 软件方案</li>
+  <li>AI 使用场景说明：方案与代码使用 ChatGPT / Gemini 辅助；文档与演示使用 WorkBuddy（含 html-to-docx、回归测试 stub）；AI 输出均经人工校核与数值验证</li>
+  <li>设计稿：monitor-demo.html（单文件演示，含小程序端预览）</li>
+  <li>代码仓库：LingxiPolish/（Qt qmake 工程骨架）</li>
+  <li>路演 PPT：（待制作）</li>
+  <li>视频 Demo：（待录制）</li>
+  <li>其他材料：_verify.py（静态校验）、_smoke.js（冒烟+数值验证）</li>
+</ol>
+
+</body>
+</html>
