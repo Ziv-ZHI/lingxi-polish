@@ -1,5 +1,33 @@
 # 部署到 Vercel（灵犀智磨 BURNISH 上位机演示）
 
+> **你已选择：连 GitHub 自动部署**（见下方「推荐路线」）。本仓库已 `git init` 并完成初始提交
+> `0bfb4b6`，工作区干净，直接走下面的 4 步即可上线。
+
+## 推荐路线：GitHub 自动部署（已选，最省事）
+
+```bash
+# 1. 在 GitHub 新建一个空仓库（不要勾 README/.gitignore，避免和本地冲突），拿到地址 <REPO_URL>
+
+# 2. 关联并推送到 main（在本机执行，仓库已初始化好）
+git remote add origin <REPO_URL>
+git branch -M main
+git push -u origin main
+
+# 3. 打开 https://vercel.com/new → Import 该仓库
+# 4. 配置（关键三项）：
+#      Root Directory   = demo
+#      Framework Preset = Other（纯静态，无构建）
+#      Build Command    = 留空
+#      Output Directory = demo
+#    Deploy → 得到 https://<项目名>.vercel.app
+```
+
+> 推送前请先把仓库级 git 邮箱改成你自己的 GitHub 邮箱（否则贡献图不记名）：
+> `git config user.email "你的GitHub邮箱"`（当前占位为 chenxin@example.com）。
+> 改完重跑一次 `git commit --amend --reset-author` 或重新 push 即可。
+
+---
+
 本目录 `LingxiPolish/demo/` 是一个**零外部依赖的单文件 HTML**（`monitor-demo.html`，214 KB，
 纯内联 CSS/JS，无任何外链），因此作为 Vercel 静态站点发布即可，无需构建。
 
