@@ -1,0 +1,4 @@
+[build]
+  # 仓库根已有 index.html（与 demo 演示一致），直接作为发布根，无需构建
+  command = ""
+  publish = "."
