@@ -1,6 +1,3 @@
 {
-  "version": 2,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/monitor-demo.html" }
-  ]
+  "version": 2
 }
