@@ -1,7 +1,5 @@
-# ===== 测试 / 校验脚本（不部署，仅本地回归用）=====
-demo/_verify.py
-demo/_smoke.js
-demo/_vmini.py
+# ===== 回归校验脚本（已文档化，随仓库提供以便复现实测结果）=====
+# demo/_verify.py  demo/_smoke.js  demo/_vmini.py   ← 保留，勿忽略
 demo/_templog.txt
 
 # ===== 历史遗留的临时重构脚本（非交付物）=====
