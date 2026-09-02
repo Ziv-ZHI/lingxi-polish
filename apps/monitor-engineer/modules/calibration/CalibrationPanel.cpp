@@ -30,7 +30,10 @@ constexpr double kGravity = 9.80665;
 // 重力补偿模型：f_meas = m * g * R[:,2] + b，对 [m, bx, by, bz] 线性，
 // 因此可以用普通最小二乘（法方程）求解，无需引入矩阵库。
 void zAxisFromRpy(double r, double p, double y, double out[3]) {
-    // R = Rz(y) Ry(p) Rx(r) 的第三列为 (sin p cos y, -sin p sin y, cos p)
+    // R = Rz(y) Ry(p) Rx(r) 的第三列为 (sin p cos y, -sin p sin y, cos p)。
+    // 该列与 roll 无关：绕末端自身 z 轴的滚转不改变 z 轴指向，
+    // 故 r 在此不参与计算（保留形参只为与调用侧 RPY 顺序对齐）。
+    Q_UNUSED(r);
     out[0] = std::sin(p) * std::cos(y);
     out[1] = -std::sin(p) * std::sin(y);
     out[2] = std::cos(p);

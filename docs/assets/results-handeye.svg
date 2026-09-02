@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" width="720" height="360" role="img" aria-label="Hand-eye reprojection RMS across 6 calibration trials" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+<rect width="720" height="360" fill="#FFFFFF"/>
+<text x="70" y="28" font-size="14" font-weight="600" fill="#17394D">Hand-eye calibration — reprojection RMS (6 independent trials)</text>
+<text x="70" y="46" font-size="11" fill="#3D5C6B">mean = 0.274 px  ·  sub-pixel  ·  generated from <tspan font-family="Menlo, Consolas, monospace">demo/_smoke.js</tspan></text>
+<line x1="70" y1="290.0" x2="680" y2="290.0" stroke="#E5E7EB" stroke-width="1"/>
+<text x="62" y="294.0" text-anchor="end" font-size="11" fill="#6B7280">0.20</text>
+<line x1="70" y1="250.0" x2="680" y2="250.0" stroke="#E5E7EB" stroke-width="1"/>
+<text x="62" y="254.0" text-anchor="end" font-size="11" fill="#6B7280">0.22</text>
+<line x1="70" y1="210.0" x2="680" y2="210.0" stroke="#E5E7EB" stroke-width="1"/>
+<text x="62" y="214.0" text-anchor="end" font-size="11" fill="#6B7280">0.24</text>
+<line x1="70" y1="170.0" x2="680" y2="170.0" stroke="#E5E7EB" stroke-width="1"/>
+<text x="62" y="174.0" text-anchor="end" font-size="11" fill="#6B7280">0.26</text>
+<line x1="70" y1="130.0" x2="680" y2="130.0" stroke="#E5E7EB" stroke-width="1"/>
+<text x="62" y="134.0" text-anchor="end" font-size="11" fill="#6B7280">0.28</text>
+<line x1="70" y1="90.0" x2="680" y2="90.0" stroke="#E5E7EB" stroke-width="1"/>
+<text x="62" y="94.0" text-anchor="end" font-size="11" fill="#6B7280">0.30</text>
+<line x1="70" y1="50.0" x2="680" y2="50.0" stroke="#E5E7EB" stroke-width="1"/>
+<text x="62" y="54.0" text-anchor="end" font-size="11" fill="#6B7280">0.32</text>
+<line x1="70" y1="141.7" x2="680" y2="141.7" stroke="#C2410C" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="676" y="135.7" text-anchor="end" font-size="11" fill="#C2410C">mean 0.274 px</text>
+<rect x="116.1" y="122.0" width="47.9" height="168.0" fill="#2E5C6E" rx="2"/>
+<text x="140.0" y="116.0" text-anchor="middle" font-size="11" font-weight="600" fill="#17394D">0.284</text>
+<text x="140.0" y="308.0" text-anchor="middle" font-size="11" fill="#3D5C6B">#1</text>
+<text x="140.0" y="324.0" text-anchor="middle" font-size="10" fill="#6B7280">m=1.8470 kg</text>
+<text x="140.0" y="338.0" text-anchor="middle" font-size="10" fill="#6B7280">cov 71%</text>
+<rect x="210.1" y="176.0" width="47.9" height="114.0" fill="#2E5C6E" rx="2"/>
+<text x="234.0" y="170.0" text-anchor="middle" font-size="11" font-weight="600" fill="#17394D">0.257</text>
+<text x="234.0" y="308.0" text-anchor="middle" font-size="11" fill="#3D5C6B">#2</text>
+<text x="234.0" y="324.0" text-anchor="middle" font-size="10" fill="#6B7280">m=1.8520 kg</text>
+<text x="234.0" y="338.0" text-anchor="middle" font-size="10" fill="#6B7280">cov 84%</text>
+<rect x="304.0" y="144.0" width="47.9" height="146.0" fill="#2E5C6E" rx="2"/>
+<text x="328.0" y="138.0" text-anchor="middle" font-size="11" font-weight="600" fill="#17394D">0.273</text>
+<text x="328.0" y="308.0" text-anchor="middle" font-size="11" fill="#3D5C6B">#3</text>
+<text x="328.0" y="324.0" text-anchor="middle" font-size="10" fill="#6B7280">m=1.8490 kg</text>
+<text x="328.0" y="338.0" text-anchor="middle" font-size="10" fill="#6B7280">cov 85%</text>
+<rect x="398.0" y="132.0" width="47.9" height="158.0" fill="#2E5C6E" rx="2"/>
+<text x="422.0" y="126.0" text-anchor="middle" font-size="11" font-weight="600" fill="#17394D">0.279</text>
+<text x="422.0" y="308.0" text-anchor="middle" font-size="11" fill="#3D5C6B">#4</text>
+<text x="422.0" y="324.0" text-anchor="middle" font-size="10" fill="#6B7280">m=1.8530 kg</text>
+<text x="422.0" y="338.0" text-anchor="middle" font-size="10" fill="#6B7280">cov 90%</text>
+<rect x="492.0" y="126.0" width="47.9" height="164.0" fill="#2E5C6E" rx="2"/>
+<text x="516.0" y="120.0" text-anchor="middle" font-size="11" font-weight="600" fill="#17394D">0.282</text>
+<text x="516.0" y="308.0" text-anchor="middle" font-size="11" fill="#3D5C6B">#5</text>
+<text x="516.0" y="324.0" text-anchor="middle" font-size="10" fill="#6B7280">m=1.8510 kg</text>
+<text x="516.0" y="338.0" text-anchor="middle" font-size="10" fill="#6B7280">cov 81%</text>
+<rect x="586.0" y="150.0" width="47.9" height="140.0" fill="#2E5C6E" rx="2"/>
+<text x="610.0" y="144.0" text-anchor="middle" font-size="11" font-weight="600" fill="#17394D">0.270</text>
+<text x="610.0" y="308.0" text-anchor="middle" font-size="11" fill="#3D5C6B">#6</text>
+<text x="610.0" y="324.0" text-anchor="middle" font-size="10" fill="#6B7280">m=1.8460 kg</text>
+<text x="610.0" y="338.0" text-anchor="middle" font-size="10" fill="#6B7280">cov 85%</text>
+<line x1="70" y1="290" x2="680" y2="290" stroke="#374151" stroke-width="1.2"/>
+<line x1="70" y1="50" x2="70" y2="290" stroke="#374151" stroke-width="1.2"/>
+<text x="70" y="348" font-size="11" fill="#374151">Trial (payload mass = 1.850 kg truth)</text>
+<text transform="translate(20 170.0) rotate(-90)" font-size="11" fill="#374151" text-anchor="middle">reprojection RMS (px)</text>
+</svg>

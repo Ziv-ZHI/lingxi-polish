@@ -1,0 +1,52 @@
+Build provenance — BURNISH host suite (Qt 5.15.2, MinGW 8.1, Windows x64)
+==========================================================================
+
+Reproduced on 2026-09-02 against `85d6e41` of `Ziv-ZHI/lingxi-polish`.
+
+Toolchain
+---------
+    QMake version 3.1
+    Using Qt version 5.15.2 with Qt Charts (LGPL)
+    GCC: C:/Qt/Tools/mingw810_64/bin/g++.exe (x86_64-w64-mingw32-g++ 8.1.0)
+    qmake: C:/Qt/5.15.2/mingw81_64/bin/qmake.exe
+
+Build command
+-------------
+    qmake LingxiPolish.pro            # writes per-subdir Makefiles
+    mingw32-make -j4                  # parallel build
+
+Compile flags (shared, set in common.pri)
+-----------------------------------------
+    -std=gnu++1z -O2 -Wall -Wextra -Wextra
+    -finput-charset=UTF-8 -fexec-charset=UTF-8
+    -DUNICODE -D_UNICODE -DWIN32 -DMINGW_HAS_SECURE_API=1
+    -DLX_VERSION_STR=\"2.2.0\"
+    -DLX_ORG_NAME=\"BURNISH-LingxiPolish\"
+    -DLX_CTRL_PERIOD_MS=2
+
+Targets (build/<debug|release>/bin)
+-----------------------------------
+    VSCR-6EUR3-Monitor-Engineer.exe   engineer edition  — 5 modules, charts
+    VSCR-6EUR3-Monitor-Operator.exe   operator edition  — 3-step job flow
+    DataAnalyzer.exe                   A/B force-trace analyzer  (Qt Charts)
+    TrajectoryPlanner.exe              point-cloud → scan-line trajectory
+    ProcessDB.exe                      SQLite process recipe library
+    EdgeGateway.exe                    MQTT-over-TLS / HTTP uplink
+    libburnishcore.a                   shared core library (static)
+
+Build result
+------------
+    mingw32-make exit code: 0
+    compiler warnings:    0
+    compiler errors:      0
+    targets produced:     6 executables + 1 static library
+
+Notes
+-----
+* STEP import (OpenCASCADE), real-camera hand-eye (OpenCV) and QtMqtt are
+  optional and gated by `LX_HAVE_OPENCV` / `LX_HAVE_OPENCASCADE` /
+  `LX_HAVE_QTMQTT` macros; the default release build is clean without them.
+* The full unfiltered log (~22 s of `mingw32-make` on this machine) is
+  not committed; the interesting lines are: ``g++ -c ...`` (compile) and
+  ``g++ -Wl,-s -Wl,-subsystem,windows -mthreads -o ...release/bin/*.exe
+  ... -lQt5Core ... -lshell32`` (link).

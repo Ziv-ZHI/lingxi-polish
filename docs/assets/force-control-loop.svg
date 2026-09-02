@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360" role="img" aria-label="Force control loop: target force compared with measured force from the KWR75 6-axis sensor, fed into admittance + switchable robust controller driving the robot joints over a 2 ms EtherCAT cycle" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#55555A"/>
+    </marker>
+    <marker id="arrFB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3F6B3A"/>
+    </marker>
+  </defs>
+  <rect width="760" height="360" fill="#FFFFFF"/>
+  <text x="30" y="26" font-size="14" font-weight="600" fill="#17394D">Constant-force control loop (admittance + switchable robust controller)</text>
+  <text x="30" y="44" font-size="11" fill="#3D5C6B">2 ms EtherCAT cycle · 6-axis KWR75 force/torque sensor · shared with the Qt host via UDP</text>
+
+  <!-- Target force -->
+  <rect x="40" y="110" width="120" height="44" rx="4" fill="#FBF1E1" stroke="#7A4A12" stroke-width="1.5"/>
+  <text x="100" y="130" text-anchor="middle" font-size="12" font-weight="600" fill="#4A2F0B">F_target</text>
+  <text x="100" y="146" text-anchor="middle" font-size="10" fill="#6B4A20">recipe (e.g. 20 N)</text>
+
+  <!-- Sum node -->
+  <circle cx="210" cy="132" r="12" fill="#FFFFFF" stroke="#374151" stroke-width="1.5"/>
+  <text x="210" y="137" text-anchor="middle" font-size="13" font-weight="700" fill="#374151">Σ</text>
+  <text x="210" y="116" text-anchor="middle" font-size="10" fill="#374151">error</text>
+
+  <!-- Admittance -->
+  <rect x="252" y="100" width="148" height="64" rx="4" fill="#E8F1F8" stroke="#2E5C6E" stroke-width="1.5"/>
+  <text x="326" y="122" text-anchor="middle" font-size="12" font-weight="600" fill="#17394D">Admittance</text>
+  <text x="326" y="140" text-anchor="middle" font-size="10" fill="#3D5C6B">M·ẍ + B·ẋ + K·x = F_err</text>
+  <text x="326" y="156" text-anchor="middle" font-size="10" fill="#3D5C6B">M, B, K — engineer-tunable</text>
+
+  <!-- Switch -->
+  <rect x="430" y="100" width="68" height="64" rx="4" fill="#EFEAF6" stroke="#5B4B8A" stroke-width="1.5"/>
+  <text x="464" y="125" text-anchor="middle" font-size="11" font-weight="600" fill="#33255C">switch</text>
+  <text x="464" y="142" text-anchor="middle" font-size="10" fill="#4B3C77">A: baseline</text>
+  <text x="464" y="156" text-anchor="middle" font-size="10" fill="#4B3C77">B: robust</text>
+
+  <!-- Robust controller (only on path B) -->
+  <rect x="520" y="60" width="180" height="46" rx="4" fill="#EAF3E8" stroke="#3F6B3A" stroke-width="1.5"/>
+  <text x="610" y="80" text-anchor="middle" font-size="12" font-weight="600" fill="#24401F">Robust controller (path B)</text>
+  <text x="610" y="96" text-anchor="middle" font-size="10" fill="#3F6B3A">disturbance observer + sliding-mode term</text>
+
+  <!-- Robot -->
+  <rect x="520" y="158" width="180" height="46" rx="4" fill="#E6F0EE" stroke="#2E5C6E" stroke-width="1.5"/>
+  <text x="610" y="178" text-anchor="middle" font-size="12" font-weight="600" fill="#17394D">Robot joints + end-effector</text>
+  <text x="610" y="194" text-anchor="middle" font-size="10" fill="#3D5C6B">arm velocity / position command</text>
+
+  <!-- Plant (workpiece) -->
+  <rect x="280" y="240" width="200" height="48" rx="4" fill="#F0EEE9" stroke="#8A857A" stroke-width="1.5"/>
+  <text x="380" y="260" text-anchor="middle" font-size="12" font-weight="600" fill="#3A3730">Workpiece + KWR75 F/T sensor</text>
+  <text x="380" y="276" text-anchor="middle" font-size="10" fill="#5B574E">contact dynamics, sensor noise, gravity load</text>
+
+  <!-- Measured force -->
+  <rect x="40" y="244" width="120" height="40" rx="4" fill="#E8F1F8" stroke="#2E5C6E" stroke-width="1.5"/>
+  <text x="100" y="262" text-anchor="middle" font-size="12" font-weight="600" fill="#17394D">F_meas</text>
+  <text x="100" y="276" text-anchor="middle" font-size="10" fill="#3D5C6B">after gravity comp</text>
+
+  <!-- Gravity compensation annotation -->
+  <rect x="40" y="296" width="120" height="36" rx="4" fill="#FBF1E1" stroke="#7A4A12" stroke-width="1"/>
+  <text x="100" y="313" text-anchor="middle" font-size="10" fill="#4A2F0B">gravity comp</text>
+  <text x="100" y="325" text-anchor="middle" font-size="10" fill="#4A2F0B">LS f = m·u + b</text>
+
+  <!-- Arrows: target -> sum -->
+  <line x1="160" y1="132" x2="198" y2="132" stroke="#55555A" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- sum -> admittance -->
+  <line x1="222" y1="132" x2="250" y2="132" stroke="#55555A" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- admittance -> switch -->
+  <line x1="402" y1="132" x2="428" y2="132" stroke="#55555A" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- switch -> robust (B path) -->
+  <line x1="464" y1="100" x2="464" y2="84" x2="518" y2="84" stroke="#3F6B3A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrFB)"/>
+  <text x="478" y="78" font-size="10" fill="#3F6B3A">when B</text>
+  <!-- switch -> robot (A path or after robust) -->
+  <line x1="498" y1="148" x2="518" y2="180" stroke="#55555A" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- robust -> robot (merged) -->
+  <line x1="610" y1="108" x2="610" y2="156" stroke="#3F6B3A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrFB)"/>
+  <!-- robot -> plant -->
+  <line x1="610" y1="204" x2="610" y2="218" x2="380" y2="218" x2="380" y2="238" stroke="#55555A" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- plant -> F_meas -->
+  <line x1="278" y1="264" x2="162" y2="264" stroke="#3F6B3A" stroke-width="1.5" marker-end="url(#arrFB)"/>
+  <!-- F_meas -> sum (feedback) -->
+  <path d="M 100 244 V 158 H 210" fill="none" stroke="#3F6B3A" stroke-width="1.5" marker-end="url(#arrFB)"/>
+  <text x="124" y="200" font-size="10" fill="#3F6B3A">feedback (UDP telemetry, 500 Hz)</text>
+
+  <!-- 2 ms cycle annotation -->
+  <text x="500" y="232" font-size="10" fill="#6B7280" font-style="italic">EtherCAT cycle 2 ms</text>
+  <text x="500" y="46" font-size="10" fill="#6B7280" font-style="italic">FirmwareProtocol.h — single source of truth, shared with Qt host</text>
+</svg>
